@@ -7,5 +7,6 @@
     <string name="eliminar">Eliminar</string>
     <string name="anadir">Añadir</string>
     <string name="editar">Editar</string>
+    <string name="msgeliminar">Se ha eliminado un album.</string>
 
 </resources>

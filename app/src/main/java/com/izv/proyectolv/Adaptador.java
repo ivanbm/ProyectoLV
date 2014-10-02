@@ -38,22 +38,24 @@ public class Adaptador extends ArrayAdapter<Disco> {
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder vh = null;
         if(convertView == null){
+
             convertView = i.inflate(recurso, null);
             vh = new ViewHolder();
             vh.tv1 = (TextView)convertView.findViewById(R.id.tvTexto1);
             vh.tv2 = (TextView)convertView.findViewById(R.id.tvTexto2);
             vh.tv3 = (TextView)convertView.findViewById(R.id.tvTexto3);
             vh.iv1 = (ImageView)convertView.findViewById(R.id.ivImagen);
+
             convertView.setTag(vh);
         }else{
             vh = (ViewHolder)convertView.getTag();
         }
-
-        Log.v("LOG",vh.toString());
+        vh.tv1.setTag(lista.get(position).getTitulo());
+        Log.v("LOG",vh.tv1.getTag().toString());
         vh.tv1.setText(lista.get(position).getTitulo());
         vh.tv2.setText(lista.get(position).getAutor());
         vh.tv3.setText(lista.get(position).getDiscografica());
-        //Svh.iv1.setImageResource(R.drawable.coldplay);
+        vh.iv1.setImageResource(R.drawable.coldplay);
         return convertView;
     }
 }

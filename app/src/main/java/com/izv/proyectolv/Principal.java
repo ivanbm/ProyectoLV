@@ -2,9 +2,14 @@ package com.izv.proyectolv;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.ContextMenu;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -35,13 +40,32 @@ public class Principal extends Activity {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+        /*int id = item.getItemId();
         if (id == R.id.action_settings) {
             return true;
+        }*/
+        switch (item.getItemId()){
+            case R.id.editar:
+                return true;
+            case R.id.elimiar:
+                AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+                //datos.remove(info.position);
+                tostada(getString(R.string.msgeliminar));
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-        return super.onOptionsItemSelected(item);
+
     }
 
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.contextual, menu);
+    }
 
     private void initComponents(){
         datos = new ArrayList<Disco>();
@@ -55,6 +79,9 @@ public class Principal extends Activity {
         ad = new Adaptador(this, R.layout.lista_detalle, datos);
         final ListView ls = (ListView)findViewById(R.id.lvLista);
         ls.setAdapter(ad);
+    }
 
+    private void tostada(String s){
+        Toast.makeText(this, s, Toast.LENGTH_SHORT).show();
     }
 }
