@@ -1,17 +1,14 @@
 package com.izv.proyectolv;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.List;
 
 
 public class Adaptador extends ArrayAdapter<Disco> {
@@ -37,6 +34,7 @@ public class Adaptador extends ArrayAdapter<Disco> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder vh = null;
+        int img;
         if(convertView == null){
 
             convertView = i.inflate(recurso, null);
@@ -50,12 +48,27 @@ public class Adaptador extends ArrayAdapter<Disco> {
         }else{
             vh = (ViewHolder)convertView.getTag();
         }
-        vh.tv1.setTag(lista.get(position).getTitulo());
-        Log.v("LOG",vh.tv1.getTag().toString());
-        vh.tv1.setText(lista.get(position).getTitulo());
+        vh.tv1.setTag(lista.get(position).getAlbum());
+        //Log.v("LOG",vh.tv1.getTag().toString());
+        vh.tv1.setText(lista.get(position).getAlbum());
         vh.tv2.setText(lista.get(position).getAutor());
         vh.tv3.setText(lista.get(position).getDiscografica());
-        vh.iv1.setImageResource(R.drawable.coldplay);
+
+        if(lista.get(position).getAutor()=="Coldplay"){
+            img = R.drawable.coldplay;
+        }else if (lista.get(position).getAutor()=="Imagine Dragons"){
+            img = R.drawable.imaginedragons;
+        }else if (lista.get(position).getAutor()=="David Guetta"){
+            img = R.drawable.davidguetta;
+        }else if (lista.get(position).getAutor()=="U2"){
+            img = R.drawable.u2;
+        }else if (lista.get(position).getAutor()=="Maroon 5"){
+            img = R.drawable.maroon5;
+        }else{
+            img = R.drawable.nocover;
+        }
+
+        vh.iv1.setImageResource(img);
         return convertView;
     }
 }

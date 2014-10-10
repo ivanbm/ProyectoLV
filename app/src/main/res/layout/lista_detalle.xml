@@ -8,7 +8,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/ivImagen"
-        android:src="@drawable/ic_launcher" />
+        android:src="@drawable/ic_launcher"
+        android:layout_marginRight="20dp" />
 
     <LinearLayout
         android:orientation="vertical"
@@ -18,7 +19,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/tvTexto1" />
+            android:id="@+id/tvTexto1"
+            android:textStyle="bold" />
 
         <TextView
             android:layout_width="wrap_content"
