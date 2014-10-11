@@ -1,13 +1,16 @@
 package com.izv.proyectolv;
 
+import android.graphics.Bitmap;
+
 /**
  * Created by Ivan on 30/09/2014.
  */
 public class Disco {
 
-    private String album, autor, discografica, imagen;
+    private String album, autor, discografica;
+    private Bitmap imagen;
 
-    public Disco(String album, String autor, String discografica, String imagen) {
+    public Disco(String album, String autor, String discografica, Bitmap imagen) {
         this.album = album;
         this.autor = autor;
         this.discografica = discografica;
@@ -38,11 +41,11 @@ public class Disco {
         this.discografica = discografica;
     }
 
-    public String getImagen() {
+    public Bitmap getImagen() {
         return imagen;
     }
 
-    public void setImagen(String imagen) {
+    public void setImagen(Bitmap imagen) {
         this.imagen = imagen;
     }
 
