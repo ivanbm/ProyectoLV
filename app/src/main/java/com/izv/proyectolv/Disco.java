@@ -5,7 +5,7 @@ import android.graphics.Bitmap;
 /**
  * Created by Ivan on 30/09/2014.
  */
-public class Disco {
+public class Disco implements Comparable<Disco>{
 
     private String album, autor, discografica;
     private Bitmap imagen;
@@ -49,5 +49,8 @@ public class Disco {
         this.imagen = imagen;
     }
 
-
+    @Override
+    public int compareTo(Disco disco) {
+        return this.getAlbum().compareTo(disco.getAlbum());
+    }
 }

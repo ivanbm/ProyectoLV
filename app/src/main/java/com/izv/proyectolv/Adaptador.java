@@ -1,6 +1,7 @@
 package com.izv.proyectolv;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 
 public class Adaptador extends ArrayAdapter<Disco> {
@@ -28,33 +30,39 @@ public class Adaptador extends ArrayAdapter<Disco> {
 
     public static class ViewHolder{
         public TextView tv1, tv2, tv3;
-        public ImageView iv1;
+        public ImageView iv;
+        public int position;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder vh = null;
-        int img;
         if(convertView == null){
-
             convertView = i.inflate(recurso, null);
+
+            ImageView iv1 = (ImageView)convertView.findViewById(R.id.ivImagen);
             vh = new ViewHolder();
             vh.tv1 = (TextView)convertView.findViewById(R.id.tvTexto1);
             vh.tv2 = (TextView)convertView.findViewById(R.id.tvTexto2);
             vh.tv3 = (TextView)convertView.findViewById(R.id.tvTexto3);
-            vh.iv1 = (ImageView)convertView.findViewById(R.id.ivImagen);
+            vh.iv = (ImageView)convertView.findViewById(R.id.ivImagen);
 
             convertView.setTag(vh);
         }else{
             vh = (ViewHolder)convertView.getTag();
         }
-        vh.tv1.setTag(lista.get(position).getAlbum());
+        Collections.sort(lista);
+        vh.position = position;
+        vh.tv1.setTag(position);
         //Log.v("LOG",vh.tv1.getTag().toString());
         vh.tv1.setText(lista.get(position).getAlbum());
         vh.tv2.setText(lista.get(position).getAutor());
         vh.tv3.setText(lista.get(position).getDiscografica());
+        Bitmap caratula = Bitmap.createScaledBitmap(lista.get(position).getImagen(), 200, 200, false);
+        vh.iv.setImageBitmap(caratula);
+        vh.iv.setTag(position);
 
-        if(lista.get(position).getAutor()=="Coldplay"){
+        /*if(lista.get(position).getAutor()=="Coldplay"){
             img = R.drawable.coldplay;
         }else if (lista.get(position).getAutor()=="Imagine Dragons"){
             img = R.drawable.imaginedragons;
@@ -68,7 +76,7 @@ public class Adaptador extends ArrayAdapter<Disco> {
             img = R.drawable.nocover;
         }
 
-        vh.iv1.setImageResource(img);
+        vh.iv1.setImageResource(img);*/
         return convertView;
     }
 }

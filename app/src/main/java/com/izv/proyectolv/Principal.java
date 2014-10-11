@@ -2,6 +2,7 @@ package com.izv.proyectolv;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -19,17 +20,23 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 
 public class Principal extends Activity {
 
     private ArrayList<Disco> datos;
     private Adaptador ad;
+    private Bitmap caratula, caratuladefault;
+    private ImageView ivCover;
+    private boolean seleccionada;
+    private final int SELECT_IMAGE = 1;
 
 
     @Override
@@ -75,7 +82,10 @@ public class Principal extends Activity {
 
                 return true;
             case R.id.elimiar:
-                //datos.remove(info.position);
+                info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+                datos.remove(info.position);
+                Collections.sort(datos);
+                ad.notifyDataSetChanged();
                 tostada(getString(R.string.msgeliminar));
                 return true;
             default:
@@ -95,16 +105,19 @@ public class Principal extends Activity {
 
     private void initComponents(){
         datos = new ArrayList<Disco>();
-        Disco dis1 = new Disco("Ghost Stories", "Coldplay", "Sony Music","coldplay.jpg");
-        Disco dis2 = new Disco("Memories", "David Guetta", "Parlophone","davidguetta.jpg");
-        Disco dis3 = new Disco("V", "Maroon 5", "Warner Music","maroon5.jpg");
-        Disco dis4 = new Disco("Demons", "Imagine Dragons", "Virgin Music","imaginedragons.jpg");
-        Disco dis5 = new Disco("Songs Of Innocence", "U2", "Warner Music","u2.jpg");
+        Bitmap def = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.ic_launcher);
+        caratuladefault = Bitmap.createScaledBitmap(def, 200, 200, false);
+        seleccionada = false;
+        /*Disco dis1 = new Disco("Ghost Stories", "Coldplay", "Sony Music", caratula);
+        Disco dis2 = new Disco("Memories", "David Guetta", "Parlophone",caratula);
+        Disco dis3 = new Disco("V", "Maroon 5", "Warner Music",caratula);
+        Disco dis4 = new Disco("Demons", "Imagine Dragons", "Virgin Music",caratula);
+        Disco dis5 = new Disco("Songs Of Innocence", "U2", "Warner Music",caratula);
         datos.add(dis1);
         datos.add(dis2);
         datos.add(dis3);
         datos.add(dis4);
-        datos.add(dis5);
+        datos.add(dis5);*/
 
 
         ad = new Adaptador(this, R.layout.lista_detalle, datos);
@@ -119,10 +132,6 @@ public class Principal extends Activity {
     }
 
     public boolean anadir(){
-
-
-
-
         final AlertDialog.Builder alert= new AlertDialog.Builder(this);
         alert.setTitle(R.string.tituloAnadir);
 
@@ -136,8 +145,17 @@ public class Principal extends Activity {
         //setContentView(R.layout.anadir);
         ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinnerArray); //selected item will look like a spinner set from XML
         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        selectDiscografica.setAdapter(spinnerArrayAdapter);
+        //selectDiscografica.setAdapter(spinnerArrayAdapter);
 
+        ivCover = (ImageView)vista.findViewById(R.id.ivCover);
+        ivCover.setImageBitmap(caratuladefault);
+
+        ivCover.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                selectFoto(view);
+            }
+        });
 
 
         alert.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
@@ -147,8 +165,16 @@ public class Principal extends Activity {
                 et1 = (EditText) vista.findViewById(R.id.etAlbum);
                 et2 = (EditText) vista.findViewById(R.id.etAutor);
                 sp1 = (Spinner) vista.findViewById(R.id.discografica);
+                ivCover = (ImageView)vista.findViewById(R.id.ivCover);
+                ivCover.setImageBitmap(caratuladefault);
 
-                datos.add(new Disco(et1.getText().toString(),et2.getText().toString(), "Discografica del spinner","caratula"));
+                if(seleccionada) {
+                    datos.add(new Disco(et1.getText().toString(), et2.getText().toString(), "Discografica del spinner", caratula));
+                }else{
+                    datos.add(new Disco(et1.getText().toString(), et2.getText().toString(), "Discografica del spinner", caratuladefault));
+                }
+                seleccionada = false;
+                Collections.sort(datos);
                 ad.notifyDataSetChanged();
                 tostada("Album añadido!");
             }
@@ -181,13 +207,23 @@ public class Principal extends Activity {
         et1 = (EditText) vista.findViewById(R.id.etAlbum);
         et2 = (EditText) vista.findViewById(R.id.etAutor);
         //et3 = (EditText) vista.findViewById(R.id.discografica);
+        ivCover = (ImageView) vista.findViewById(R.id.ivCover);
 
         et1.setText(alb);
         et2.setText(aut);
+        ivCover.setImageBitmap(datos.get(index).getImagen());
+
+        ivCover.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                selectFoto(view);
+            }
+        });
 
         alert.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-                datos.set(index, new Disco(et1.getText().toString(),et2.getText().toString(), "Discografica del spinner","caratula"));
+                datos.set(index, new Disco(et1.getText().toString(),et2.getText().toString(), "Discografica del spinner",caratula));
+                Collections.sort(datos);
                 ad.notifyDataSetChanged();
                 tostada("Album editado!");
             }
@@ -202,29 +238,46 @@ public class Principal extends Activity {
     /*----------------------------------------------------*/
     /*                  SELECCIONAR IMAGENES              */
     /*----------------------------------------------------*/
-    final int REQ_CODE_PICK_IMAGE =1;
+
     @Override
-    protected void onActivityResult(int requestCode, int resultCode,
-                                    Intent imageReturnedIntent) {
-        super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
-
-        switch(requestCode) {
-            case REQ_CODE_PICK_IMAGE:
-                if(resultCode == RESULT_OK){
-                    Uri selectedImage = imageReturnedIntent.getData();
-                    String[] filePathColumn = {MediaStore.Images.Media.DATA};
-
-                    Cursor cursor = getContentResolver().query(
-                            selectedImage, filePathColumn, null, null, null);
-                    cursor.moveToFirst();
-
-                    int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-                    String filePath = cursor.getString(columnIndex);
-                    cursor.close();
-
-
-                    Bitmap yourSelectedImage = BitmapFactory.decodeFile(filePath);
-                }
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case SELECT_IMAGE:
+                    Uri selectedImageUri = data.getData();
+                    String path = getPath(getApplicationContext(), selectedImageUri);
+                    Bitmap bitmap = BitmapFactory.decodeFile(path);
+                    caratula = Bitmap.createScaledBitmap(bitmap, 200, 200, false);
+                    ivCover.setImageBitmap(caratula);
+                    seleccionada = true;
+                    break;
+            }
+        }else{
+            seleccionada = false;
         }
     }
+
+
+    public void selectFoto(View v){
+        Intent foto = new Intent(Intent.ACTION_PICK);
+        foto.setType("image/*");
+        startActivityForResult(foto, SELECT_IMAGE);
+    }
+
+    private String getPath(Context context, Uri uri){
+        Cursor cursor = null;
+        try {
+            String[] proj = { MediaStore.Images.Media.DATA };
+            cursor = context.getContentResolver().query(uri,  proj, null, null, null);
+            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            cursor.moveToFirst();
+            return cursor.getString(column_index);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+    }
+
 }
