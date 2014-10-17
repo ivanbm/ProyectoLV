@@ -51,7 +51,7 @@ public class Adaptador extends ArrayAdapter<Disco> {
         }else{
             vh = (ViewHolder)convertView.getTag();
         }
-        Collections.sort(lista);
+
         vh.position = position;
         vh.tv1.setTag(position);
         //Log.v("LOG",vh.tv1.getTag().toString());

@@ -5,4 +5,12 @@
         android:title="@string/anadir"
         android:orderInCategory="100"
         android:showAsAction="never" />
+    <item android:id="@+id/orderbyAlbum"
+        android:title="@string/orderbyAlbum"
+        android:orderInCategory="100"
+        android:showAsAction="never" />
+    <item android:id="@+id/orderbyAutor"
+        android:title="@string/orderbyAutor"
+        android:orderInCategory="100"
+        android:showAsAction="never" />
 </menu>

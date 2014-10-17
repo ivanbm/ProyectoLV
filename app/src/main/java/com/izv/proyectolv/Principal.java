@@ -27,6 +27,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 
 
 public class Principal extends Activity {
@@ -35,9 +36,13 @@ public class Principal extends Activity {
     private Adaptador ad;
     private Bitmap caratula, caratuladefault;
     private ImageView ivCover;
-    private boolean seleccionada;
+    private boolean coverSeleccionada;
     private final int SELECT_IMAGE = 1;
 
+
+    /*-------------------------------------------*/
+    /*              METODOS ON                   */
+    /*-------------------------------------------*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +69,10 @@ public class Principal extends Activity {
         int id = item.getItemId();
         if (id == R.id.action_anadir) {
             anadir();
+        }else if (id == R.id.orderbyAlbum) {
+            ordenarAlbum();
+        }else if (id == R.id.orderbyAutor) {
+            ordenarAutor();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -103,21 +112,25 @@ public class Principal extends Activity {
         inflater.inflate(R.menu.contextual, menu);
     }
 
+        /*-------------------------------------------*/
+        /*              METODOS PROPIOS              */
+        /*-------------------------------------------*/
+
     private void initComponents(){
         datos = new ArrayList<Disco>();
-        Bitmap def = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.ic_launcher);
+        Bitmap def = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.nocover);
         caratuladefault = Bitmap.createScaledBitmap(def, 200, 200, false);
-        seleccionada = false;
-        /*Disco dis1 = new Disco("Ghost Stories", "Coldplay", "Sony Music", caratula);
-        Disco dis2 = new Disco("Memories", "David Guetta", "Parlophone",caratula);
-        Disco dis3 = new Disco("V", "Maroon 5", "Warner Music",caratula);
-        Disco dis4 = new Disco("Demons", "Imagine Dragons", "Virgin Music",caratula);
-        Disco dis5 = new Disco("Songs Of Innocence", "U2", "Warner Music",caratula);
+        coverSeleccionada = false;
+        Disco dis1 = new Disco("Ghost Stories", "Coldplay", "Sony Music", BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.coldplay));
+        Disco dis2 = new Disco("Memories", "David Guetta", "Parlophone",BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.davidguetta));
+        Disco dis3 = new Disco("V", "Maroon 5", "Warner Music",BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.maroon5));
+        Disco dis4 = new Disco("Demons", "Imagine Dragons", "Virgin Music",BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.imaginedragons));
+        Disco dis5 = new Disco("Songs Of Innocence", "U2", "Warner Music",BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.u2));
         datos.add(dis1);
         datos.add(dis2);
         datos.add(dis3);
         datos.add(dis4);
-        datos.add(dis5);*/
+        datos.add(dis5);
 
 
         ad = new Adaptador(this, R.layout.lista_detalle, datos);
@@ -139,12 +152,18 @@ public class Principal extends Activity {
         final View vista = inflater.inflate(R.layout.anadir, null);
         alert.setView(vista);
 
+        //setContentView(R.layout.anadir);
         String[] spinnerArray = {"Parlophone", "Sony", "Warner Music"};
-        Spinner selectDiscografica = (Spinner) findViewById(R.id.discografica);
+        //Spinner selectDiscografica = (Spinner)findViewById(R.id.discografica);
 
         //setContentView(R.layout.anadir);
-        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinnerArray); //selected item will look like a spinner set from XML
-        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<String> adapter_state = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, spinnerArray);
+        adapter_state.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        //selectDiscografica.setAdapter(adapter_state);
+
+
+        //ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinnerArray); //selected item will look like a spinner set from XML
+        //spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         //selectDiscografica.setAdapter(spinnerArrayAdapter);
 
         ivCover = (ImageView)vista.findViewById(R.id.ivCover);
@@ -157,26 +176,26 @@ public class Principal extends Activity {
             }
         });
 
-
         alert.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-                EditText et1,et2;
+                EditText et1,et2, discografica;
                 Spinner sp1;
                 et1 = (EditText) vista.findViewById(R.id.etAlbum);
                 et2 = (EditText) vista.findViewById(R.id.etAutor);
-                sp1 = (Spinner) vista.findViewById(R.id.discografica);
+                discografica = (EditText) vista.findViewById(R.id.etDiscografica);
+                //sp1 = (Spinner) vista.findViewById(R.id.discografica);
                 ivCover = (ImageView)vista.findViewById(R.id.ivCover);
                 ivCover.setImageBitmap(caratuladefault);
 
-                if(seleccionada) {
-                    datos.add(new Disco(et1.getText().toString(), et2.getText().toString(), "Discografica del spinner", caratula));
+                if(coverSeleccionada) {
+                    datos.add(new Disco(et1.getText().toString(), et2.getText().toString(), discografica.getText().toString(), caratula));
                 }else{
-                    datos.add(new Disco(et1.getText().toString(), et2.getText().toString(), "Discografica del spinner", caratuladefault));
+                    datos.add(new Disco(et1.getText().toString(), et2.getText().toString(), discografica.getText().toString(), caratuladefault));
                 }
-                seleccionada = false;
+                coverSeleccionada = false;
                 Collections.sort(datos);
                 ad.notifyDataSetChanged();
-                tostada("Album añadido!");
+                tostada(getString(R.string.msganadir));
             }
         });
         alert.setNegativeButton(android.R.string.no ,null);
@@ -187,7 +206,7 @@ public class Principal extends Activity {
 
 
     /*-------------------------------------*/
-    /*--      HAY QUE HACER EL EDITAR    --*/
+    /*--           EDITAR DISCO          --*/
     /*-------------------------------------*/
 
 
@@ -203,15 +222,18 @@ public class Principal extends Activity {
         final View vista = inflater.inflate(R.layout.anadir, null);
         alert.setView(vista);
 
-        final EditText et1,et2, et3;
+        final EditText et1,et2, discografica;
         et1 = (EditText) vista.findViewById(R.id.etAlbum);
         et2 = (EditText) vista.findViewById(R.id.etAutor);
+        discografica = (EditText) vista.findViewById(R.id.etDiscografica);
         //et3 = (EditText) vista.findViewById(R.id.discografica);
         ivCover = (ImageView) vista.findViewById(R.id.ivCover);
 
         et1.setText(alb);
         et2.setText(aut);
+        discografica.setText(dis);
         ivCover.setImageBitmap(datos.get(index).getImagen());
+        caratula = datos.get(index).getImagen();
 
         ivCover.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -222,10 +244,10 @@ public class Principal extends Activity {
 
         alert.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-                datos.set(index, new Disco(et1.getText().toString(),et2.getText().toString(), "Discografica del spinner",caratula));
+                datos.set(index, new Disco(et1.getText().toString(),et2.getText().toString(), discografica.getText().toString(),caratula));
                 Collections.sort(datos);
                 ad.notifyDataSetChanged();
-                tostada("Album editado!");
+                tostada(getString(R.string.msgeditar));
             }
         });
         alert.setNegativeButton(android.R.string.no ,null);
@@ -250,11 +272,11 @@ public class Principal extends Activity {
                     Bitmap bitmap = BitmapFactory.decodeFile(path);
                     caratula = Bitmap.createScaledBitmap(bitmap, 200, 200, false);
                     ivCover.setImageBitmap(caratula);
-                    seleccionada = true;
+                    coverSeleccionada = true;
                     break;
             }
         }else{
-            seleccionada = false;
+            coverSeleccionada = false;
         }
     }
 
@@ -278,6 +300,34 @@ public class Principal extends Activity {
                 cursor.close();
             }
         }
+    }
+
+    /*----------------------------------------------------*/
+    /*                  METODOS ORDENACION                */
+    /*----------------------------------------------------*/
+
+    public void ordenarAlbum(){
+        Collections.sort(datos, new Comparator<Disco>() {
+            @Override
+            public int compare(Disco d1, Disco d2) {
+                return d1.getAlbum().compareTo(d2.getAlbum());
+            }
+        });
+        ad.notifyDataSetChanged();
+        for (int i = 0; i < datos.size() ; i++) {
+            System.out.println(datos.get(i).getAutor());
+        }
+    }
+
+    public void ordenarAutor(){
+        Collections.sort(datos, new Comparator<Disco>() {
+            @Override
+            public int compare(Disco d1, Disco d2) {
+                return d1.getAutor().compareTo(d2.getAutor());
+            }
+        });
+        ad.notifyDataSetChanged();
+
     }
 
 }
