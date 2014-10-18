@@ -17,7 +17,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/etAlbum"
             android:layout_weight="1"
-            android:inputType="textCapSentences"
+            android:inputType="textCapWords"
             android:hint="Album" />
     </LinearLayout>
 
@@ -31,7 +31,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/etAutor"
             android:layout_weight="1"
-            android:capitalize="sentences"
+            android:inputType="textCapWords"
             android:hint="Autor" />
     </LinearLayout>
 
@@ -44,6 +44,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/etDiscografica"
+            android:inputType="textCapWords"
             android:hint="Discografica" />
 
     </LinearLayout>
